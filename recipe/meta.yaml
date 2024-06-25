@@ -15,7 +15,9 @@ source:
 build:
   number: 0
   # tensorflow not available for py312
-  skip: true  # [py<38 or py>311]
+  # skip s390x because not available:
+  #   tensorflow, tensorflow-probability, opencv, numba, libgdal
+  skip: true  # [py<38 or py>311 or s390x]
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
 
 requirements:
