@@ -65,10 +65,16 @@ requirements:
     - tensorflow-probability >=0.8.0,<0.20.0
     - pytorch >=1.7.0,<1.14.0
 
+{% set tests_to_ignore = "" %}
+{% set tests_to_ignore = tests_to_ignore + " --ignore=${SP_DIR}/alibi_detect/saving/tests/test_saving.py" %}  # [not win]
+{% set tests_to_ignore = tests_to_ignore + " --ignore=%SP_DIR%/alibi_detect/saving/tests/test_saving.py" %}   # [win]
+
 
 test:
   imports:
     - alibi_detect
+  requires:
+    - pytest
   commands:
     # pip check is disabled because a few packages have their
     # dependencies not set right (opencv, and )
@@ -77,9 +83,7 @@ test:
     # skip test_saving because uses pytest-cases (not available)
     # and anyway the datasets would not be available because
     # alibi_testing is not available.
-    - pytest -v --pyargs alibi_detect --ignore=${SP_DIR}/alibi_detect/saving/tests/test_saving.py
-  requires:
-    - pytest
+    - pytest -v --pyargs alibi_detect {{ tests_to_ignore }}
 
 about:
   home: https://github.com/SeldonIO/alibi-detect
