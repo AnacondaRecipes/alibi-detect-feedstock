@@ -3,6 +3,9 @@ From: Lorenzo Pirritano <lpirritano@anaconda.com>
 Date: Tue, 25 Jun 2024 14:36:30 +0200
 Subject: [PATCH 2/2] fix opt_dep attribute check
 
+opt_dep is not there when the tests are not run in the CI
+and a runtime error occurs.
+
 ---
  alibi_detect/tests/conftest.py | 2 ++
  1 file changed, 2 insertions(+)
