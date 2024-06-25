@@ -29,6 +29,14 @@ requirements:
     - python
     - setuptools
     - wheel
+    ## Note from conda-forge, which suggests to use libgdal in run.
+    #  Instead, we place it in host and host and benefit from the
+    #  run_exports.
+    #
+    #  Necessary for supporting "opencv"
+    #  A. "mesa-libGL" should be present in "yum_requirements.txt".
+    #  B. "libgdal" should be added to "meta.yaml:requirements:run".
+    - libgdal {{ libgdal }}
   run:
     # Core dependencies
     - python
@@ -56,10 +64,7 @@ requirements:
     - tensorflow >=2.2.0,!=2.6.0,!=2.6.1,<2.13.0
     - tensorflow-probability >=0.8.0,<0.20.0
     - pytorch >=1.7.0,<1.14.0
-    ## Note: Necessary for supporting "opencv"
-    #  A. "mesa-libGL" should be present in "yum_requirements.txt".
-    #  B. "libgdal" should be added to "meta.yaml:requirements:run".
-    - libgdal
+
 
 test:
   imports:
