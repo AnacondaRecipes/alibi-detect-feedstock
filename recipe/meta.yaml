@@ -72,6 +72,7 @@ test:
   imports:
     - alibi_detect
   requires:
+    - pip
     - pytest
   commands:
     # on osx failing with:
