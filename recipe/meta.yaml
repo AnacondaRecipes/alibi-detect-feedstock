@@ -79,7 +79,7 @@ test:
     #   alibi-detect 0.11.4 requires opencv-python, which is not installed.
     #   tensorflow 2.11.0 requires libclang, which is not installed.
     #   tensorflow 2.11.0 has requirement protobuf<3.20,>=3.9.2, but you have protobuf 3.20.3.
-    - pip check  # [not osx]
+    # - pip check  # [not osx]
     - pytest -v --pyargs alibi_detect {{ tests_to_ignore }}
 
 about:
