@@ -56,6 +56,9 @@ requirements:
     - tensorflow >=2.2.0,!=2.6.0,!=2.6.1,<2.13.0
     - tensorflow-probability >=0.8.0,<0.20.0
     - pytorch >=1.7.0,<1.14.0
+  run_constrained:
+    - prophet >=1.1.0,<2.0.0
+    - pykeops >=2.0.0,<2.2.0
 
 {% set tests_to_ignore = "" %}
 {% set tests_to_ignore = tests_to_ignore + " --ignore=${SP_DIR}/alibi_detect/saving/tests/test_saving.py" %}  # [not win]
