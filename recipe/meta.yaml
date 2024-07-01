@@ -52,12 +52,12 @@ requirements:
     # STC, see https://discuss.python.org/t/adopting-recommending-a-toml-parser/4068
     - toml >=0.10.1,<1.0.0
     - catalogue >=2.0.0,<3.0.0
+  run_constrained:
+    - blas * openblas    # [osx and x86_64]
     # Optional dependencies, but treat as core for conda
     - tensorflow >=2.2.0,!=2.6.0,!=2.6.1,<2.13.0
     - tensorflow-probability >=0.8.0,<0.20.0
     - pytorch >=1.7.0,<1.14.0
-  run_constrained:
-    - blas * openblas    # [osx and x86_64]
     - prophet >=1.1.0,<2.0.0
     - pykeops >=2.0.0,<2.2.0
 
