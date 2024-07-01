@@ -29,14 +29,6 @@ requirements:
     - python
     - setuptools
     - wheel
-    ## Note from conda-forge, which suggests to use libgdal in run.
-    #  Instead, we place it in host and host and benefit from the
-    #  run_exports.
-    #
-    #  Necessary for supporting "opencv"
-    #  A. "mesa-libGL" should be present in "yum_requirements.txt".
-    #  B. "libgdal" should be added to "meta.yaml:requirements:run".
-    - libgdal {{ libgdal }}
   run:
     # Core dependencies
     - python
@@ -45,7 +37,7 @@ requirements:
     # avoid 0.54 due to: https://github.com/SeldonIO/alibi/issues/466
     - numba >=0.50.0,!=0.54.0,<0.58.0
     - numpy >=1.16.2,<2.0.0
-    - opencv >=3.2.0,<5.0.0
+    - py-opencv >=3.2.0,<5.0.0
     - pandas >=1.0.0,<3.0.0
     - pillow >=5.4.1,<10.0.0
     - requests >=2.21.0,<3.0.0
