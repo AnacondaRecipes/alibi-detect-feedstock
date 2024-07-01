@@ -57,6 +57,7 @@ requirements:
     - tensorflow-probability >=0.8.0,<0.20.0
     - pytorch >=1.7.0,<1.14.0
   run_constrained:
+    - blas * openblas    # [osx and x86_64]
     - prophet >=1.1.0,<2.0.0
     - pykeops >=2.0.0,<2.2.0
 
