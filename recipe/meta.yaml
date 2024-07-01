@@ -54,7 +54,7 @@ requirements:
     - catalogue >=2.0.0,<3.0.0
   run_constrained:
     - blas * openblas    # [osx and x86_64]
-    # Optional dependencies, but treat as core for conda
+    # optional dependencies
     - tensorflow >=2.2.0,!=2.6.0,!=2.6.1,<2.13.0
     - tensorflow-probability >=0.8.0,<0.20.0
     - pytorch >=1.7.0,<1.14.0
@@ -74,12 +74,14 @@ test:
   requires:
     - pip
     - pytest
+    - tensorflow
+    - pytorch
+    - tensorflow-probability
   commands:
-    # on osx failing with:
+    # skip pip check failing with:
     #   alibi-detect 0.11.4 requires opencv-python, which is not installed.
     #   tensorflow 2.11.0 requires libclang, which is not installed.
     #   tensorflow 2.11.0 has requirement protobuf<3.20,>=3.9.2, but you have protobuf 3.20.3.
-    # - pip check  # [not osx]
     - pytest -v --pyargs alibi_detect {{ tests_to_ignore }}
 
 about:
@@ -109,7 +111,6 @@ about:
     he talk covers what drift is and why it pays to detect it, the different types 
     of drift, how it can be detected in a principled manner and also describes the 
     anatomy of a drift detector.
-
 
     PyPI: [https://pypi.org/project/alibi-detect/](https://pypi.org/project/alibi-detect/)
 
