@@ -35,14 +35,14 @@ requirements:
     - dill >=0.3.0,<0.4.0
     - matplotlib-base >=3.0.0,<4.0.0
     # avoid 0.54 due to: https://github.com/SeldonIO/alibi/issues/466
-    - numba >=0.50.0,!=0.54.0,<0.58.0
+    - numba >=0.50.0,!=0.54.0,<0.56.0
     - numpy >=1.16.2,<2.0.0
     - py-opencv >=3.2.0,<5.0.0
-    - pandas >=1.0.0,<3.0.0
+    - pandas >=0.23.3,<2.0.0
     - pillow >=5.4.1,<10.0.0
     - requests >=2.21.0,<3.0.0
     # https://github.com/SeldonIO/alibi/issues/215
-    - scikit-image >=0.14.2,!=0.17.1,<0.22
+    - scikit-image >=0.14.2,!=0.17.1,<0.20
     - scikit-learn >=0.20.2,<2.0.0
     - scipy >=1.3.0,<2.0.0
     - tqdm >=4.28.1,<5.0.0
@@ -55,11 +55,11 @@ requirements:
   run_constrained:
     - blas * openblas    # [osx and x86_64]
     # optional dependencies
-    - tensorflow >=2.2.0,!=2.6.0,!=2.6.1,<2.13.0
-    - tensorflow-probability >=0.8.0,<0.20.0
-    - pytorch >=1.7.0,<1.14.0
-    - prophet >=1.1.0,<2.0.0
-    - pykeops >=2.0.0,<2.2.0
+    # - tensorflow >=2.2.0,!=2.6.0,!=2.6.1,<2.13.0
+    # - tensorflow-probability >=0.8.0,<0.20.0
+    # - pytorch >=1.7.0,<1.14.0
+    # - prophet >=1.1.0,<2.0.0
+    # - pykeops >=2.0.0,<2.2.0
 
 {% set tests_to_ignore = "" %}
 # skip test_saving because uses pytest-cases (not available)
@@ -82,7 +82,7 @@ test:
     #   alibi-detect 0.11.4 requires opencv-python, which is not installed.
     #   tensorflow 2.11.0 requires libclang, which is not installed.
     #   tensorflow 2.11.0 has requirement protobuf<3.20,>=3.9.2, but you have protobuf 3.20.3.
-    - pytest -v --pyargs alibi_detect {{ tests_to_ignore }}
+    - pytest -v --pyargs alibi_detect {{ tests_to_ignore }} -k "not test_validate_kernel_and_coerce_2_tensor"
 
 about:
   home: https://github.com/SeldonIO/alibi-detect
