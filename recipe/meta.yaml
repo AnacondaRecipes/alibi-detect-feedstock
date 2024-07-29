@@ -10,7 +10,6 @@ source:
   sha256: 5e81eee628260a264e5ebf27d9ab400a34f8ab53d1c0e883547c4c6f9b1aa1be
   patches:
     - patches/0001-fix-binom_test-to-binomtest.patch
-    - patches/0002-fix-opt_dep-attribute-check.patch
 
 build:
   number: 0
@@ -65,13 +64,6 @@ requirements:
     - prophet >=1.1.0,<2.0.0
     - pykeops >=2.0.0,<2.2.0
 
-{% set tests_to_ignore = "" %}
-# skip test_saving because uses pytest-cases (not available)
-# and anyway the datasets would not be available because
-# alibi_testing is not available.
-{% set tests_to_ignore = tests_to_ignore + " --ignore=${SP_DIR}/alibi_detect/saving/tests/test_saving.py" %}  # [not win]
-{% set tests_to_ignore = tests_to_ignore + " --ignore=%SP_DIR%/alibi_detect/saving/tests/test_saving.py" %}   # [win]
-
 test:
   imports:
     - alibi_detect
@@ -81,21 +73,38 @@ test:
     - pytest-xdist >=1.28.0,<4.0.0
     - pytest-randomly >=3.5.0,<4.0.0
     - pytest-timeout >=1.4.2,<3.0.0
+    # optional dependencies
+    # [prophet]
+    - prophet
+    # [pytorch]
     - pytorch
     # torch and fbgemm.dll
     # see: 
     # https://discuss.pytorch.org/t/failed-to-import-pytorch-fbgemm-dll-or-one-of-its-dependencies-is-missing/201969/3
     - vs2019_win-64  # [win]
+    # [tensorflow]
     - tensorflow
     - tensorflow-probability
     - types-requests >=2.25,<3.0
     - types-toml >=0.10,<1.0
+  source_files:
+    # we need to source the files and run pytest no using
+    # "--pyargs alibi_detect" otherwise the "--opt-dep" is
+    # not recognized (for some reason)
+    - alibi_detect/tests
+    # ignore alibi_detect/saving/tests/test_saving.py because
+    # uses pytest-cases (not available) and anyway the datasets would
+    # not be available because alibi_testing is not available.
+    - alibi_detect/saving/tests/test_validate.py
   commands:
     # skip pip check failing with:
     #   alibi-detect 0.11.4 requires opencv-python, which is not installed.
     #   tensorflow 2.11.0 requires libclang, which is not installed.
     #   tensorflow 2.11.0 has requirement protobuf<3.20,>=3.9.2, but you have protobuf 3.20.3.
-    - pytest -v --pyargs alibi_detect {{ tests_to_ignore }} -k "not test_validate_kernel_and_coerce_2_tensor"
+    # 
+    # skip test_keops_utils_dependencies because pykeops is not available
+    - pytest -v alibi_detect/tests --opt-dep=all -k "not test_keops_utils_dependencies"
+    - pytest -v alibi_detect/saving/tests/test_validate.py
 
 about:
   home: https://github.com/SeldonIO/alibi-detect
