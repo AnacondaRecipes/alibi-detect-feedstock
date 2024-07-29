@@ -67,6 +67,10 @@ requirements:
 # alibi_testing is not available.
 {% set tests_to_ignore = tests_to_ignore + " --ignore=${SP_DIR}/alibi_detect/saving/tests/test_saving.py" %}  # [not win]
 {% set tests_to_ignore = tests_to_ignore + " --ignore=%SP_DIR%/alibi_detect/saving/tests/test_saving.py" %}   # [win]
+# skip tests that depend on tensorflow, optional, which requires
+# tensorflow-probability not available in the correct version
+{% set tests_to_ignore = tests_to_ignore + " --ignore=${SP_DIR}/alibi_detect/saving/tests/test_validate.py" %}  # [not win]
+{% set tests_to_ignore = tests_to_ignore + " --ignore=%SP_DIR%/alibi_detect/saving/tests/test_validate.py" %}   # [win]
 
 test:
   imports:
@@ -80,7 +84,10 @@ test:
     - pytorch
     # torch and fbgemm.dll
     - vs2019_win-64  # [win]
-    - tensorflow
+    # we can't test using tensorflow because it will require
+    # tensorflow-probability which we do not have in the correct
+    # version
+    # - tensorflow
     # - tensorflow-probability
     - types-requests >=2.25,<3.0
     - types-toml >=0.10,<1.0
