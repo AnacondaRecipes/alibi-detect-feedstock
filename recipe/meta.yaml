@@ -55,11 +55,15 @@ requirements:
   run_constrained:
     - blas * openblas    # [osx and x86_64]
     # optional dependencies
-    # - tensorflow >=2.2.0,!=2.6.0,!=2.6.1,<2.13.0
-    # - tensorflow-probability >=0.8.0,<0.20.0
-    # - pytorch >=1.7.0,<1.14.0
-    # - prophet >=1.1.0,<2.0.0
-    # - pykeops >=2.0.0,<2.2.0
+    # tensorflow will go will tensorflow-probability
+    # and tensorflow-probability needs tensorflow >=2.6.1
+    # and because upstream requires !=2.6.1, we require
+    # a strict tensorflow >2.6.1
+    - tensorflow >2.6.1,<2.13.0
+    - tensorflow-probability >=0.8.0,<0.20.0
+    - pytorch >=1.7.0,<1.14.0
+    - prophet >=1.1.0,<2.0.0
+    - pykeops >=2.0.0,<2.2.0
 
 {% set tests_to_ignore = "" %}
 # skip test_saving because uses pytest-cases (not available)
@@ -67,10 +71,6 @@ requirements:
 # alibi_testing is not available.
 {% set tests_to_ignore = tests_to_ignore + " --ignore=${SP_DIR}/alibi_detect/saving/tests/test_saving.py" %}  # [not win]
 {% set tests_to_ignore = tests_to_ignore + " --ignore=%SP_DIR%/alibi_detect/saving/tests/test_saving.py" %}   # [win]
-# skip tests that depend on tensorflow, optional, which requires
-# tensorflow-probability not available in the correct version
-{% set tests_to_ignore = tests_to_ignore + " --ignore=${SP_DIR}/alibi_detect/saving/tests/test_validate.py" %}  # [not win]
-{% set tests_to_ignore = tests_to_ignore + " --ignore=%SP_DIR%/alibi_detect/saving/tests/test_validate.py" %}   # [win]
 
 test:
   imports:
@@ -83,12 +83,11 @@ test:
     - pytest-timeout >=1.4.2,<3.0.0
     - pytorch
     # torch and fbgemm.dll
+    # see: 
+    # https://discuss.pytorch.org/t/failed-to-import-pytorch-fbgemm-dll-or-one-of-its-dependencies-is-missing/201969/3
     - vs2019_win-64  # [win]
-    # we can't test using tensorflow because it will require
-    # tensorflow-probability which we do not have in the correct
-    # version
-    # - tensorflow
-    # - tensorflow-probability
+    - tensorflow
+    - tensorflow-probability
     - types-requests >=2.25,<3.0
     - types-toml >=0.10,<1.0
   commands:
@@ -127,8 +126,7 @@ about:
     anatomy of a drift detector.
 
     PyPI: [https://pypi.org/project/alibi-detect/](https://pypi.org/project/alibi-detect/)
-
-  doc_url: https://docs.seldon.io/projects/alibi-detect
+  doc_url: https://docs.seldon.io/projects/alibi-detect/en/latest
   dev_url: https://github.com/SeldonIO/alibi-detect
 
 extra:
