@@ -73,10 +73,17 @@ test:
     - alibi_detect
   requires:
     - pip
-    - pytest
-    - tensorflow
+    - pytest >=5.3.5,<8.0.0
+    - pytest-xdist >=1.28.0,<4.0.0
+    - pytest-randomly >=3.5.0,<4.0.0
+    - pytest-timeout >=1.4.2,<3.0.0
     - pytorch
-    - tensorflow-probability
+    # torch and fbgemm.dll
+    - vs2019_win-64  # [win]
+    - tensorflow
+    # - tensorflow-probability
+    - types-requests >=2.25,<3.0
+    - types-toml >=0.10,<1.0
   commands:
     # skip pip check failing with:
     #   alibi-detect 0.11.4 requires opencv-python, which is not installed.
