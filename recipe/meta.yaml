@@ -52,7 +52,7 @@ requirements:
     - toml >=0.10.1,<1.0.0
     - catalogue >=2.0.0,<3.0.0
   run_constrained:
-    - blas * openblas    # [osx and x86_64]
+    # - blas * openblas    # [osx and x86_64]
     # Optional dependencies
     # tensorflow will go will tensorflow-probability
     # and tensorflow-probability needs tensorflow >=2.6.1
