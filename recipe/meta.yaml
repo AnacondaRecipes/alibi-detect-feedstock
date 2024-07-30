@@ -75,7 +75,7 @@ test:
     - pytest-timeout >=1.4.2,<3.0.0
     # optional dependencies
     # [prophet]
-    - prophet  # [not (osx and x86_64)]
+    - prophet  # [not (osx and x86_64 or win)]
     # [pytorch]
     - pytorch  # [not (osx and x86_64)]
     # torch and fbgemm.dll
@@ -103,9 +103,9 @@ test:
     #   tensorflow 2.11.0 has requirement protobuf<3.20,>=3.9.2, but you have protobuf 3.20.3.
     # 
     # skip test_keops_utils_dependencies because pykeops is not available
-    - pytest -v alibi_detect/tests --opt-dep=all -k "not (test_keops_utils_dependencies)"  # [not (osx and x86_64)]
-    - pytest -v alibi_detect/tests --opt-dep=default -k "not (test_keops_utils_dependencies)"  # [osx and x86_64]
-    # - pytest -v alibi_detect/saving/tests/test_validate.py
+    - pytest -v alibi_detect/tests --opt-dep=all -k "not (test_keops_utils_dependencies)"  # [not (osx and x86_64 or win)]
+    - pytest -v alibi_detect/tests --opt-dep=default -k "not (test_keops_utils_dependencies)"  # [osx and x86_64 or win]
+    # - pytest -v alibi_detect/saving/tests/test_validate.py  # [not (osx and x86_64)]
 
 about:
   home: https://github.com/SeldonIO/alibi-detect
