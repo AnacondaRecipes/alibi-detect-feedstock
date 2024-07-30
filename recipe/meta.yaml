@@ -83,8 +83,8 @@ test:
     # https://discuss.pytorch.org/t/failed-to-import-pytorch-fbgemm-dll-or-one-of-its-dependencies-is-missing/201969/3
     - vs2019_win-64  # [win]
     # [tensorflow]
-    - tensorflow              # [not (osx and x86_64)]
-    - tensorflow-probability  # [not (osx and x86_64)]
+    - tensorflow              # [not (osx and x86_64 or win)]
+    - tensorflow-probability  # [not (osx and x86_64 or win)]
     - types-requests >=2.25,<3.0
     - types-toml >=0.10,<1.0
   source_files:
@@ -104,8 +104,11 @@ test:
     # 
     # skip test_keops_utils_dependencies because pykeops is not available
     - pytest -v alibi_detect/tests --opt-dep=all -k "not (test_keops_utils_dependencies)"  # [not (osx and x86_64 or win)]
-    - pytest -v alibi_detect/tests --opt-dep=default -k "not (test_keops_utils_dependencies)"  # [osx and x86_64 or win]
-    # - pytest -v alibi_detect/saving/tests/test_validate.py  # [not (osx and x86_64)]
+    - pytest -v alibi_detect/tests --opt-dep=default -k "not (test_keops_utils_dependencies)"  # [osx and x86_64]
+    - pytest -v alibi_detect/tests --opt-dep=torch -k "not (test_keops_utils_dependencies)"  # [win]
+    # uses both tensorflow and pytorch which in win and osx-64
+    # cannot be installed without conflicts
+    - pytest -v alibi_detect/saving/tests/test_validate.py  # [not (osx and x86_64 or win)]
 
 about:
   home: https://github.com/SeldonIO/alibi-detect
