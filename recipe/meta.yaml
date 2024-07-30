@@ -137,7 +137,7 @@ about:
     anatomy of a drift detector.
 
     PyPI: [https://pypi.org/project/alibi-detect/](https://pypi.org/project/alibi-detect/)
-  doc_url: https://docs.seldon.io/projects/alibi-detect/en/latest
+  doc_url: https://docs.seldon.io/projects/alibi-detect
   dev_url: https://github.com/SeldonIO/alibi-detect
 
 extra:
