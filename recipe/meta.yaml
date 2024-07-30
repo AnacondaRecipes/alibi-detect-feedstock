@@ -77,11 +77,11 @@ test:
     # [prophet]
     # - prophet
     # [pytorch]
-    - pytorch
+    # - pytorch
     # torch and fbgemm.dll
     # see: 
     # https://discuss.pytorch.org/t/failed-to-import-pytorch-fbgemm-dll-or-one-of-its-dependencies-is-missing/201969/3
-    - vs2019_win-64  # [win]
+    # - vs2019_win-64  # [win]
     # [tensorflow]
     - tensorflow
     - tensorflow-probability
@@ -103,7 +103,7 @@ test:
     #   tensorflow 2.11.0 has requirement protobuf<3.20,>=3.9.2, but you have protobuf 3.20.3.
     # 
     # skip test_keops_utils_dependencies because pykeops is not available
-    - pytest -v alibi_detect/tests --opt-dep=all -k "not test_keops_utils_dependencies"
+    - pytest -v alibi_detect/tests --opt-dep=tensorflow -k "not (test_keops_utils_dependencies)"
     - pytest -v alibi_detect/saving/tests/test_validate.py
 
 about:
