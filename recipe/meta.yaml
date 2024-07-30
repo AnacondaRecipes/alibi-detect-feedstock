@@ -75,7 +75,7 @@ test:
     - pytest-timeout >=1.4.2,<3.0.0
     # optional dependencies
     # [prophet]
-    - prophet
+    # - prophet
     # [pytorch]
     - pytorch
     # torch and fbgemm.dll
