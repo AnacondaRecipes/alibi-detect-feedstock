@@ -6,60 +6,114 @@ package:
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/alibi-detect-{{ version }}.tar.gz
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
   sha256: 5e81eee628260a264e5ebf27d9ab400a34f8ab53d1c0e883547c4c6f9b1aa1be
+  patches:
+    - patches/0001-fix-binom_test-to-binomtest.patch
 
 build:
   number: 0
-  noarch: python
-  script: {{ PYTHON }} -m pip install . -vv
+  # tensorflow not available for py312
+  # skip s390x because not available:
+  #   tensorflow, tensorflow-probability, opencv, numba, libgdal
+  skip: true  # [py<38 or py>311 or s390x]
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
 
 requirements:
+  build:
+    - patch     # [not win]
+    - m2-patch  # [win]
   host:
     - pip
-    - python >=3.7
+    - python
+    - setuptools
+    - wheel
   run:
     # Core dependencies
-    - python >=3.7
+    - python
     - dill >=0.3.0,<0.4.0
     - matplotlib-base >=3.0.0,<4.0.0
-    - numba >=0.50.0,!=0.54.0,<0.56.0
+    # avoid 0.54 due to: https://github.com/SeldonIO/alibi/issues/466
+    - numba >=0.50.0,!=0.54.0,<0.58.0
     - numpy >=1.16.2,<2.0.0
     - opencv >=3.2.0,<5.0.0
-    - pandas >=0.23.3,<2.0.0
+    - pandas >=1.0.0,<2.0.0
     - pillow >=5.4.1,<10.0.0
     - requests >=2.21.0,<3.0.0
-    - scikit-image >=0.14.2,!=0.17.1,<0.20
+    # https://github.com/SeldonIO/alibi/issues/215
+    - scikit-image >=0.14.2,!=0.17.1,<0.22
     - scikit-learn >=0.20.2,<2.0.0
     - scipy >=1.3.0,<2.0.0
     - tqdm >=4.28.1,<5.0.0
     - transformers >=4.0.0,<5.0.0
     - typing-extensions >=3.7.4.3
     - pydantic >=1.8.0,<2.0.0
+    # STC, see https://discuss.python.org/t/adopting-recommending-a-toml-parser/4068
     - toml >=0.10.1,<1.0.0
     - catalogue >=2.0.0,<3.0.0
-    # Optional dependencies, but treat as core for conda
-    - tensorflow >=2.2.0,!=2.6.0,!=2.6.1,<2.10.0
-    - tensorflow-probability >=0.8.0,<0.18.0
-    - pytorch >=1.7.0,<1.13.0
-    ## Note: Necessary for supporting "opencv"
-    #  A. "mesa-libGL" should be present in "yum_requirements.txt".
-    #  B. "libgdal" should be added to "meta.yaml:requirements:run".
-    - libgdal
+  run_constrained:
+    # Optional dependencies
+    # tensorflow will go will tensorflow-probability
+    # and tensorflow-probability needs tensorflow >=2.6.1
+    # and because upstream requires !=2.6.1, we require
+    # a strict tensorflow >2.6.1
+    - tensorflow >2.6.1,<2.13.0
+    - tensorflow-probability >=0.8.0,<0.20.0
+    - pytorch >=1.7.0,<1.14.0
+    - prophet >=1.1.0,<2.0.0
+    - pykeops >=2.0.0,<2.2.0
 
 test:
   imports:
     - alibi_detect
-  # commands:
-  #   - pip check
-  # requires:
-  #   - pip
+  requires:
+    - pip
+    - pytest >=5.3.5,<8.0.0
+    - pytest-xdist >=1.28.0,<4.0.0
+    - pytest-randomly >=3.5.0,<4.0.0
+    - pytest-timeout >=1.4.2,<3.0.0
+    # optional dependencies
+    # [prophet]
+    - prophet  # [not (osx and x86_64 or win)]
+    # [pytorch]
+    - pytorch  # [not (osx and x86_64 or win)]
+    # torch and fbgemm.dll
+    # see: 
+    # https://discuss.pytorch.org/t/failed-to-import-pytorch-fbgemm-dll-or-one-of-its-dependencies-is-missing/201969/3
+    # - vs2019_win-64  # [win]
+    # [tensorflow]
+    - tensorflow              # [not (osx and x86_64 or win)]
+    - tensorflow-probability  # [not (osx and x86_64 or win)]
+    - types-requests >=2.25,<3.0
+    - types-toml >=0.10,<1.0
+  source_files:
+    # we need to source the files and run pytest not using
+    # "--pyargs alibi_detect" otherwise the "--opt-dep" is
+    # not recognized (for some reason)
+    - alibi_detect/tests
+    # ignore alibi_detect/saving/tests/test_saving.py because
+    # uses pytest-cases (not available) and anyway the datasets would
+    # not be available because alibi_testing is not available.
+    - alibi_detect/saving/tests/test_validate.py
+  commands:
+    # skip pip check failing with:
+    #   alibi-detect 0.11.4 requires opencv-python, which is not installed.
+    #   tensorflow 2.11.0 requires libclang, which is not installed.
+    #   tensorflow 2.11.0 has requirement protobuf<3.20,>=3.9.2, but you have protobuf 3.20.3.
+    # 
+    # skip test_keops_utils_dependencies because pykeops is not available
+    - pytest -v alibi_detect/tests --opt-dep=all -k "not (test_keops_utils_dependencies)"  # [not (osx and x86_64 or win)]
+    - pytest -v alibi_detect/tests --opt-dep=default -k "not (test_keops_utils_dependencies)"  # [osx and x86_64 or win]
+    # uses both tensorflow and pytorch which in win and osx-64
+    # cannot be installed without conflicts
+    - pytest -v alibi_detect/saving/tests/test_validate.py  # [not (osx and x86_64 or win)]
 
 about:
   home: https://github.com/SeldonIO/alibi-detect
   summary: Algorithms for outlier detection, concept drift and metrics.
   license: Apache-2.0
   license_file: LICENSE
+  license_family: Apache
   description: |
     [Alibi Detect](https://github.com/SeldonIO/alibi-detect) is an open source 
     Python library focused on **outlier**, **adversarial** and **drift** detection. 
@@ -82,10 +136,8 @@ about:
     of drift, how it can be detected in a principled manner and also describes the 
     anatomy of a drift detector.
 
-
     PyPI: [https://pypi.org/project/alibi-detect/](https://pypi.org/project/alibi-detect/)
-
-  doc_url: https://docs.seldon.io/projects/alibi-detect/en/latest/
+  doc_url: https://docs.seldon.io/projects/alibi-detect
   dev_url: https://github.com/SeldonIO/alibi-detect
 
 extra:
@@ -94,3 +146,6 @@ extra:
     # Maintainers from upstream repo
     - jklaise
     - ascillitoe
+  skip-lints:
+    - missing_pip_check
+    - invalid_url
